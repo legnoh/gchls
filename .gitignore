@@ -200,3 +200,4 @@ override.tf.json
 terraform.rc
 
 requirements.txt
+!gchls.spec

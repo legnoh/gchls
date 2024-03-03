@@ -2,13 +2,14 @@ name: Publish
 
 on:
   push:
-    branches:
-      - "main"
-  workflow_dispatch:
+    tags:
+      - "v*"
 
 jobs:
   build:
-    runs-on: macos-14-xlarge
+    runs-on: macos-13
+    permissions:
+      contents: write
     steps:
     - name: Check Out Repo 
       uses: actions/checkout@v4
@@ -21,16 +22,22 @@ jobs:
         cache: pipenv
     - name: Install dependencies
       run: pipenv install
-    - name: set locale
+    - name: Packaging
       run: |
-        sudo locale-gen ja_JP.UTF-8
-        sudo update-locale LANG=ja_JP.UTF-8
-    - name: prepare requirements.txt
-      run: pipenv lock -r > requirements.txt
-    - name: Package Application
-      uses: sayyid5416/pyinstaller@v1
+        pipenv run build
+        chmod +x ./dist/gchls
+        cd ./dist
+        tar zcf gchls-${{ github.ref_name }}.tar.gz ./gchls
+        mv ./gchls-${{ github.ref_name }}.tar.gz ../
+        cd ..
+    - name: Upload to artifact
+      uses: actions/upload-artifact@v3
       with:
-        python_ver: '3.11'
-        spec: './gchls.spec'
-        requirements: './requirements.txt'
-        upload_exe_with_name: 'gchls'
+        name: gchls
+        path: "gchls-*.tar.gz"
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        artifacts: gchls-${{ github.ref_name }}.tar.gz
+        makeLatest: true

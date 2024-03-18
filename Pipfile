@@ -15,4 +15,4 @@ python_version = "3.12"
 
 [scripts]
 main = "python3 main.py"
-build = "pipenv run pyinstaller gchls.py --onefile --target-arch universal2"
+build = "pipenv run pyinstaller gchls.py --onefile"

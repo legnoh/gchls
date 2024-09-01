@@ -26,8 +26,8 @@ if __name__ == '__main__':
         continue
 
       start_at = datetime.datetime.strptime(epg[0][0]['live_start_datetime'], "%Y-%m-%d %H:%M:%S").astimezone(ORIGIN_TZ)
-      if start_at - datetime.timedelta(hours=1) > datetime.datetime.now(ORIGIN_TZ):
-        logging.warning(f"ch{ch}: this program is feature program")
+      if start_at - datetime.timedelta(hours=12) > datetime.datetime.now(ORIGIN_TZ):
+        logging.warning(f"ch{ch}: this program is too feature program")
         continue
 
       logging.info(f"ch{ch}: Fetching m3u8 data...")

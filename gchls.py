@@ -41,7 +41,7 @@ if __name__ == '__main__':
       m3u8_url = next((item for item in m3u8_data.playlists if item.stream_info.average_bandwidth == 3000000), None)
       if m3u8_url != None and  hasattr(m3u8_url, 'uri'):
         streams["GCH_STREAMS"].append({
-          "channel": f"ch{ch}",
+          "channel_id": f"ch{ch}",
           "program_name": epg[0][0]['program_name'],
           "stream_url": m3u8_url.uri,
           "start_at": start_at.isoformat(),

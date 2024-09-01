@@ -1,9 +1,10 @@
-import json,logging,os,sys
+import datetime,json,logging,os,zoneinfo
 from modules.greench import Greench
 
 GCH_EMAIL = os.environ["GCH_EMAIL"]
 GCH_PASSWORD = os.environ["GCH_PASSWORD"]
 OUTPUT_FILEPATH = os.environ.get("OUTPUT_FILEPATH", "./urls.tfvars.json")
+ORIGIN_TZ = zoneinfo.ZoneInfo("Asia/Tokyo")
 
 log_format = '%(asctime)s[%(filename)s:%(lineno)d][%(levelname)s] %(message)s'
 log_level = os.getenv("LOGLEVEL", logging.INFO)
@@ -20,8 +21,13 @@ if __name__ == '__main__':
 
       logging.info(f"ch{ch}: Fetching latest epg data...")
       epg = gch.get_latest_epg(channel_code=ch)
-      if epg == None:
-        logging.warn(f"ch{ch}: error with get epg")
+      if epg == [] or epg == None:
+        logging.info(f"ch{ch}: latest epg data was not found.")
+        continue
+
+      start_at = datetime.datetime.strptime(epg[0][0]['live_start_datetime'], "%Y-%m-%d %H:%M:%S").astimezone(ORIGIN_TZ)
+      if start_at - datetime.timedelta(hours=1) > datetime.datetime.now(ORIGIN_TZ):
+        logging.warning(f"ch{ch}: this program is feature program")
         continue
 
       logging.info(f"ch{ch}: Fetching m3u8 data...")
@@ -39,7 +45,7 @@ if __name__ == '__main__':
           "stream_url": m3u8_url.uri,
         })
    
-    logging.info(f"ch{ch}: exporting streams data to {OUTPUT_FILEPATH} ...")
+    logging.info(f"exporting streams data to {OUTPUT_FILEPATH} ...")
 
     with open(OUTPUT_FILEPATH, mode='w') as f:
       f.write(json.dumps(streams, indent=2))

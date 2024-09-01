@@ -9,7 +9,7 @@ log_format = '%(asctime)s[%(filename)s:%(lineno)d][%(levelname)s] %(message)s'
 log_level = os.getenv("LOGLEVEL", logging.INFO)
 logging.basicConfig(format=log_format, datefmt='%Y-%m-%d %H:%M:%S%z', level=log_level)
 
-streams = {"gch_streams": []}
+streams = {"GCH_STREAMS": []}
 
 if __name__ == '__main__':
     
@@ -33,7 +33,7 @@ if __name__ == '__main__':
       logging.info(f"ch{ch}: Parsing m3u8 data...")
       m3u8_url = next((item for item in m3u8_data.playlists if item.stream_info.average_bandwidth == 3000000), None)
       if m3u8_url != None and  hasattr(m3u8_url, 'uri'):
-        streams["gch_streams"].append({
+        streams["GCH_STREAMS"].append({
           "channel": f"ch{ch}",
           "program_name": epg[0][0]['program_name'],
           "stream_url": m3u8_url.uri,

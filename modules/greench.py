@@ -82,11 +82,11 @@ class Greench:
             logging.warning(f"Request failed: url: {url} exception: {e}")
             return None
 
-    def get_latest_epg(self, channel_code:str="ch1"):
-        return self.get_without_auth(f"{self.api_epg_url}/latest", params={"channel_code": channel_code})
+    def get_latest_epg(self, channel_code:int=1):
+        return self.get_without_auth(f"{self.api_epg_url}/latest", params={"channel_code": f"ch{channel_code}"})
 
-    def get_m3u8(self, pc:str, di:str="1", dgi:str="2", ch:str="ch1", lightviewer:bool=False) -> m3u8.M3U8|None:
-        resp = self.post(f"{self.api_url}/vi", obj={"pc": pc, "di": di, "dgi": dgi, "ch": ch, "lightviewer": lightviewer})
+    def get_m3u8(self, pc:str, di:str="1", dgi:str="2", ch:int=1, lightviewer:bool=False) -> m3u8.M3U8|None:
+        resp = self.post(f"{self.api_url}/vi", obj={"pc": pc, "di": di, "dgi": dgi, "ch": f"ch{ch}", "lightviewer": lightviewer})
         if resp != None:
             return m3u8.loads(content=resp[0]["v"])
         logging.warning(f"failed to /vi response: {resp}")

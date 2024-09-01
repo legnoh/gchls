@@ -26,6 +26,7 @@ if __name__ == '__main__':
         continue
 
       start_at = datetime.datetime.strptime(epg[0][0]['live_start_datetime'], "%Y-%m-%d %H:%M:%S").astimezone(ORIGIN_TZ)
+      end_at = datetime.datetime.strptime(epg[0][0]['live_end_datetime'], "%Y-%m-%d %H:%M:%S").astimezone(ORIGIN_TZ)
       if start_at - datetime.timedelta(hours=12) > datetime.datetime.now(ORIGIN_TZ):
         logging.warning(f"ch{ch}: this program is too feature program")
         continue
@@ -43,6 +44,8 @@ if __name__ == '__main__':
           "channel": f"ch{ch}",
           "program_name": epg[0][0]['program_name'],
           "stream_url": m3u8_url.uri,
+          "start_at": start_at.isoformat(),
+          "end_at": end_at.isoformat(),
         })
    
     logging.info(f"exporting streams data to {OUTPUT_FILEPATH} ...")
